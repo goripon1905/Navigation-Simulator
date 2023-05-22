@@ -1,87 +1,105 @@
-import tkinter as tk
-from PIL import ImageTk, Image
-import pygame
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtMultimedia import QSoundEffect
+from PyQt5.QtCore import QUrl
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QSize
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 
-# ウィンドウの作成
-window = tk.Tk()
-window.geometry("700x400")
-window.title("Navigation System Simulator")
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Navigation System Simulator")
+        self.setGeometry(100, 100, 700, 400)
+        self.button_click_sound = QSoundEffect()
+        self.button_click_sound.setSource(QUrl.fromLocalFile("source/pi.wav"))
 
-# 画像の読み込み
-koiki_path = "source/koiki.png"
-koiki = Image.open(koiki_path)
+        self.create_webview()
+        self.create_buttons()
+        self.create_labels()
 
-shousai_path = "source/shousai.png"
-shousai = Image.open(shousai_path)
+    def create_webview(self):
+        self.webview = WebView(self)
 
-off_path = "source/off.png"
-off = Image.open(off_path)
+    def create_buttons(self):
+        button = QPushButton(self)
+        button.setGeometry(615, 350, 82, 48)
+        button.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
+        button.clicked.connect(self.button_click)
+        button.setIcon(QIcon("source/koiki.png"))
+        button.setIconSize(button.size())
+        button.raise_()
 
-hyoujihenkou_path = "source/hyoujihenkou.png"
-hyoujihenkou = Image.open(hyoujihenkou_path)
+        button2 = QPushButton(self)
+        button2.setGeometry(0, 350, 82, 48)
+        button2.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
+        button2.clicked.connect(self.button_click)
+        button2.setIcon(QIcon("source/shousai.png"))
+        button2.setIconSize(button.size())
+        button2.raise_()
 
-titentouroku_path = "source/titentouroku.png"
-titentouroku = Image.open(titentouroku_path)
+        button3 = QPushButton(self)
+        button3.setGeometry(88, 350, 82, 48)
+        button3.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
+        button3.clicked.connect(self.button_click)
+        button3.setIcon(QIcon("source/off.png"))
+        button3.setIconSize(button.size())
+        button3.raise_()
 
-houi_path = "source/houi.png"
-houi = Image.open(houi_path)
+        button4 = QPushButton(self)
+        button4.setGeometry(245, 350, 131, 48)
+        button4.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
+        button4.clicked.connect(self.button_click)
+        button4.setIcon(QIcon("source/hyoujihenkou.png"))
+        button4.setIconSize(QSize(131, 48))
+        button4.setFixedSize(131, 48)
+        button4.raise_()
 
-gps_path = "source/gps.png"
-gps = Image.open(gps_path)
+        button5 = QPushButton(self)
+        button5.setGeometry(480, 350, 131, 48)
+        button5.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
+        button5.clicked.connect(self.button_click)
+        button5.setIcon(QIcon("source/titentouroku.png"))
+        button5.setIconSize(QSize(131, 48))
+        button5.setFixedSize(131, 48)
+        button5.raise_()
 
-vics_path = "source/vics.png"
-vics = Image.open(vics_path)
+    def create_labels(self):
+        label1 = QLabel(self)
+        label1.setGeometry(0, 0, 96, 61)
+        label1.setPixmap(QPixmap("source/houi.png"))
+        label1.raise_()
 
-etc_path = "source/etc.png"
-etc = Image.open(etc_path)
+        label2 = QLabel(self)
+        label2.setGeometry(0, 60, 93, 58)
+        label2.setPixmap(QPixmap("source/gps.png"))
+        label2.raise_()
 
-pin_path = "source/pin.png"
-pin = Image.open(pin_path)
+        label3 = QLabel(self)
+        label3.setGeometry(0, 120, 93, 42)
+        label3.setPixmap(QPixmap("source/vics.png"))
+        label3.raise_()
 
-# pygameの初期化
-pygame.mixer.init()
+        label4 = QLabel(self)
+        label4.setGeometry(460, -5, 243, 30)
+        label4.setPixmap(QPixmap("source/etc.png"))
+        label4.raise_()
 
-# クリック時の処理
-def button_click():
-    pygame.mixer.music.load("source/pi.wav")
-    pygame.mixer.music.play()
+    def create_webview(self):
+        webview = WebView(self)
 
-# 画像ボタンの表示
-photo = ImageTk.PhotoImage(koiki)
-button = tk.Button(window, text="", image=photo, command=button_click)
-button.place(x=615, y=350)
+    def button_click(self):
+        self.button_click_sound.play()
 
-photo2 = ImageTk.PhotoImage(shousai)
-button2 = tk.Button(window, text="", image=photo2, command=button_click)
-button2.place(x=0, y=350)
+class WebView(QWebEngineView):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.setGeometry(0, -50, 800, 500)
+        self.load(QUrl("https://map.yahoo.co.jp/?lat=35.66517&lon=139.71356&zoom=15&maptype=basic"))
 
-photo3 = ImageTk.PhotoImage(off)
-button3 = tk.Button(window, text="", image=photo3, command=button_click)
-button3.place(x=88, y=350)
-
-photo4 = ImageTk.PhotoImage(hyoujihenkou)
-button4 = tk.Button(window, text="", image=photo4, command=button_click)
-button4.place(x=245, y=350)
-
-photo5 = ImageTk.PhotoImage(titentouroku)
-button5 = tk.Button(window, text="", image=photo5, command=button_click)
-button5.place(x=480, y=350)
-
-photo6 = ImageTk.PhotoImage(houi)
-button6 = tk.Label(window, text="", image=photo6)
-button6.place(x=0, y=0)
-
-photo7 = ImageTk.PhotoImage(gps)
-button7 = tk.Label(window, text="", image=photo7)
-button7.place(x=0, y=60)
-
-photo8 = ImageTk.PhotoImage(vics)
-button8 = tk.Label(window, text="", image=photo8)
-button8.place(x=0, y=120)
-
-photo9 = ImageTk.PhotoImage(etc)
-button9 = tk.Label(window, text="", image=photo9)
-button9.place(x=460, y=-5)
-
-
-window.mainloop()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec_())
