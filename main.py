@@ -1,10 +1,10 @@
 import sys
+import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtMultimedia import QSoundEffect
-from PyQt5.QtCore import QUrl
-from PyQt5.QtCore import QSize
-from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtCore import QUrl, QSize, QTimer
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -23,6 +23,8 @@ class MainWindow(QMainWindow):
 
     def create_webview(self):
         self.webview = WebView(self)
+        settings = QWebEngineSettings.defaultSettings()
+        settings.setAttribute(QWebEngineSettings.JavascriptEnabled, True)
 
     def create_buttons(self):
         off_button = QPushButton(self)
@@ -53,7 +55,7 @@ class MainWindow(QMainWindow):
         button3 = QPushButton(self)
         button3.setGeometry(615, 350, 82, 48)
         button3.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
-        button3.clicked.connect(self.button3_click)  # 新しく追加
+        button3.clicked.connect(self.button3_click)
         button3.setIcon(QIcon("source/koiki.png"))
         button3.setIconSize(button3.size())
         button3.raise_()
@@ -80,17 +82,18 @@ class MainWindow(QMainWindow):
 
     def create_labels(self):
         label1 = QLabel(self)
-        label1.setGeometry(0, 0, 96, 61)
+        label1.setGeometry(2, 2, 96, 61)
         label1.setPixmap(QPixmap("source/houi.png"))
         label1.raise_()
 
         label2 = QLabel(self)
-        label2.setGeometry(0, 60, 93, 58)
-        label2.setPixmap(QPixmap("source/gps.png"))
+        label2.setGeometry(2, 62, 93, 58)
+        label2.setPixmap(QPixmap("source/30m.png"))
         label2.raise_()
+        self.label2 = label2
 
         label3 = QLabel(self)
-        label3.setGeometry(0, 120, 93, 42)
+        label3.setGeometry(2, 121, 93, 42)
         label3.setPixmap(QPixmap("source/vics.png"))
         label3.raise_()
 
@@ -116,13 +119,31 @@ class MainWindow(QMainWindow):
             button.show()
         self.button_click_sound.play()
 
-    def button2_click(self):  # 詳細ボタンをクリックした時に音再生と拡大するXpathを実行
+    def button2_click(self):
         self.button_click_sound.play()
         self.webview.page().runJavaScript('document.evaluate("//*[@id=\\"range_slider_zoom\\"]/div/div/div[1]/button", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();')  # Xpath
+        QTimer.singleShot(500, self.get_and_update_data)
 
-    def button3_click(self):  # 追加したボタン3のクリックイベント
+    def button3_click(self):
         self.button_click_sound.play()
         self.webview.page().runJavaScript('document.evaluate("//*[@id=\\"range_slider_zoom\\"]/div/div/div[2]/button", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();')  # Xpath
+        QTimer.singleShot(500, self.get_and_update_data)
+
+    def get_and_update_data(self):
+        self.webview.page().runJavaScript('document.getElementById("map").textContent', self.handle_data)
+
+    def handle_data(self, result):
+        value = result.strip()
+        print(value)  # デバッグ用
+
+        # 画像のファイルパスを生成
+        image_file = os.path.join("source", value + ".png")
+
+        # 画像の更新
+        if os.path.exists(image_file):
+            self.label2.setPixmap(QPixmap(image_file))
+        else:
+            print("画像ファイルが存在しません。")
 
 class WebView(QWebEngineView):
     def __init__(self, parent):
