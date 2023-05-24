@@ -1,9 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtMultimedia import QSoundEffect
 from PyQt5.QtCore import QUrl
-from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
@@ -46,7 +45,7 @@ class MainWindow(QMainWindow):
         button2 = QPushButton(self)
         button2.setGeometry(5, 350, 82, 48)
         button2.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
-        button2.clicked.connect(self.button_click)
+        button2.clicked.connect(self.button2_click)
         button2.setIcon(QIcon("source/shousai.png"))
         button2.setIconSize(button2.size())
         button2.raise_()
@@ -54,7 +53,7 @@ class MainWindow(QMainWindow):
         button3 = QPushButton(self)
         button3.setGeometry(615, 350, 82, 48)
         button3.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
-        button3.clicked.connect(self.button_click)
+        button3.clicked.connect(self.button3_click)  # 新しく追加
         button3.setIcon(QIcon("source/koiki.png"))
         button3.setIconSize(button3.size())
         button3.raise_()
@@ -100,9 +99,6 @@ class MainWindow(QMainWindow):
         label4.setPixmap(QPixmap("source/etc.png"))
         label4.raise_()
 
-    def create_webview(self):
-        webview = WebView(self)
-
     def button_click(self):
         self.button_click_sound.play()
 
@@ -120,10 +116,18 @@ class MainWindow(QMainWindow):
             button.show()
         self.button_click_sound.play()
 
+    def button2_click(self):  # 詳細ボタンをクリックした時に音再生と拡大するXpathを実行
+        self.button_click_sound.play()
+        self.webview.page().runJavaScript('document.evaluate("//*[@id=\\"range_slider_zoom\\"]/div/div/div[1]/button", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();')  # Xpath
+
+    def button3_click(self):  # 追加したボタン3のクリックイベント
+        self.button_click_sound.play()
+        self.webview.page().runJavaScript('document.evaluate("//*[@id=\\"range_slider_zoom\\"]/div/div/div[2]/button", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();')  # Xpath
+
 class WebView(QWebEngineView):
     def __init__(self, parent):
         super().__init__(parent)
-        self.setGeometry(0, -50, 800, 500)
+        self.setGeometry(0, -50, 810, 510)
         self.load(QUrl("https://map.yahoo.co.jp/?lat=35.70345&lon=139.74911&zoom=17&maptype=traffic"))
 
 if __name__ == "__main__":
