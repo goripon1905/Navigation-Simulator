@@ -21,6 +21,13 @@ class MainWindow(QMainWindow):
         self.create_buttons()
         self.create_labels()
 
+        self.timer = QTimer()
+        self.timer.setSingleShot(True)
+        self.timer.timeout.connect(self.run_xpath)
+        self.timer.start(3000) # プログラム起動3秒後にパネルを閉じるカウント
+
+        self.button4_click_count = 1 # ボタン4のカウントデフォルト数値
+
     def create_webview(self):
         self.webview = WebView(self)
         settings = QWebEngineSettings.defaultSettings()
@@ -63,7 +70,7 @@ class MainWindow(QMainWindow):
         button4 = QPushButton(self)
         button4.setGeometry(245, 350, 131, 48)
         button4.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
-        button4.clicked.connect(self.button_click)
+        button4.clicked.connect(self.button4_click)
         button4.setIcon(QIcon("source/hyoujihenkou.png"))
         button4.setIconSize(QSize(131, 48))
         button4.setFixedSize(131, 48)
@@ -88,7 +95,7 @@ class MainWindow(QMainWindow):
 
         label2 = QLabel(self)
         label2.setGeometry(2, 62, 93, 58)
-        label2.setPixmap(QPixmap("source/30m.png"))
+        label2.setPixmap(QPixmap("source/30m.png")) #  デフォルトは30m
         label2.raise_()
         self.label2 = label2
 
@@ -128,6 +135,32 @@ class MainWindow(QMainWindow):
         self.button_click_sound.play()
         self.webview.page().runJavaScript('document.evaluate("//*[@id=\\"range_slider_zoom\\"]/div/div/div[2]/button", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();')  # Xpath
         QTimer.singleShot(500, self.get_and_update_data)
+
+    def button4_click(self):
+        self.button_click_sound.play()
+        self.webview.page().runJavaScript('document.evaluate("//*[@id=\'map_control\']/div/div[1]/button", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();')  # Xpath 1
+
+        if self.button4_click_count % 2 == 1:  # クリック回数で分岐
+            QTimer.singleShot(0, self.execute_second_xpath)
+        else:
+            QTimer.singleShot(10, self.execute_third_xpath)
+
+        self.button4_click_count += 1
+
+    def execute_second_xpath(self):
+        self.webview.page().runJavaScript('document.evaluate("//*[@id=\'map_type_selector\']/div/div[2]/div[2]/ul[1]/li[2]/button", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();')  # Xpath 2
+        self.get_and_update_data()
+
+    def execute_third_xpath(self):
+        self.webview.page().runJavaScript('document.evaluate("//*[@id=\'map_control\']/div/div[1]/button", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();')  # Xpath 3
+        QTimer.singleShot(10, self.execute_fourth_xpath)
+
+    def execute_fourth_xpath(self):
+        self.webview.page().runJavaScript('document.evaluate("//*[@id=\'map_type_selector\']/div/div[2]/div[2]/ul[1]/li[5]/button", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();')  # Xpath 4
+        self.get_and_update_data()
+
+    def run_xpath(self): # パネルを自動で閉じる
+        self.webview.page().runJavaScript('document.evaluate("//*[@id=\\"root\\"]/div/div[2]/div[2]/div[2]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();')  # Xpath 5
 
     def get_and_update_data(self):
         self.webview.page().runJavaScript('document.getElementById("map").textContent', self.handle_data)
