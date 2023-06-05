@@ -35,7 +35,7 @@ class MainWindow(QMainWindow):
 
     def create_buttons(self):
         off_button = QPushButton(self)
-        off_button.setGeometry(88, 350, 82, 48)
+        off_button.setGeometry(88, 350, 80, 46)
         off_button.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
         off_button.clicked.connect(self.off_button_click)
         off_button.setIcon(QIcon("source/off.png"))
@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
         off_button.raise_()
 
         on_button = QPushButton(self)
-        on_button.setGeometry(5, 350, 82, 48)
+        on_button.setGeometry(5, 350, 80, 46)
         on_button.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
         on_button.clicked.connect(self.on_button_click)
         on_button.setIcon(QIcon("source/on.png"))
@@ -52,7 +52,7 @@ class MainWindow(QMainWindow):
         on_button.raise_()
 
         button2 = QPushButton(self)
-        button2.setGeometry(5, 350, 82, 48)
+        button2.setGeometry(5, 350, 80, 46)
         button2.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
         button2.clicked.connect(self.button2_click)
         button2.setIcon(QIcon("source/shousai.png"))
@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         button2.raise_()
 
         button3 = QPushButton(self)
-        button3.setGeometry(615, 350, 82, 48)
+        button3.setGeometry(615, 350, 80, 46)
         button3.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
         button3.clicked.connect(self.button3_click)
         button3.setIcon(QIcon("source/koiki.png"))
@@ -68,21 +68,21 @@ class MainWindow(QMainWindow):
         button3.raise_()
 
         button4 = QPushButton(self)
-        button4.setGeometry(245, 350, 131, 48)
+        button4.setGeometry(245, 350, 129, 46)
         button4.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
         button4.clicked.connect(self.button4_click)
         button4.setIcon(QIcon("source/hyoujihenkou.png"))
-        button4.setIconSize(QSize(131, 48))
-        button4.setFixedSize(131, 48)
+        button4.setIconSize(QSize(129, 46))
+        button4.setFixedSize(129, 46)
         button4.raise_()
 
         button5 = QPushButton(self)
-        button5.setGeometry(480, 350, 131, 48)
+        button5.setGeometry(480, 350, 129, 46)
         button5.setStyleSheet("background-color: rgba(0, 0, 0, 0)")
         button5.clicked.connect(self.button_click)
         button5.setIcon(QIcon("source/titentouroku.png"))
-        button5.setIconSize(QSize(131, 48))
-        button5.setFixedSize(131, 48)
+        button5.setIconSize(QSize(129, 46))
+        button5.setFixedSize(129, 46)
         button5.raise_()
 
         self.buttons = [off_button, on_button, button2, button3, button4, button5]  # ボタンをリストで保持
